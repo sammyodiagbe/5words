@@ -6,6 +6,4 @@ const UserSchema = mongoose.Schema({
   password: String,
 });
 
-export default {
-  UserSchema,
-};
+export default UserSchema;

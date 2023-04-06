@@ -22,23 +22,52 @@ router.post("/create-account", async (req, res) => {
   }
 
   // no user exist so now we can create the user
-  const hashedPassword = bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   const newUser = new UserModel({ username, password: hashedPassword, email });
   await newUser.save();
 
   const token = jwt.sign({ username, email }, process.env.JWT_SECRET_KEY);
-  res.cookie("authToken", token, { maxAge: 86400 * 3 });
+  res.cookie("authToken", token, { maxAge: 86400 * 3, httpOnly: true });
 
   res.status(201).json({
     created: true,
     message: "Account creation was successful",
-    user: { ...newUser, password: null },
+    user: { ...newUser._doc, password: null },
   });
 });
 
-router.post("/login", (req, res) => {
-  res.send("Login request has been responded to.");
+// login endpoint
+router.post("/login", async (req, res) => {
+  const { username: usernameData, password: passwordData } = req.body;
+
+  // check if user exist
+  const user = await UserModel.findOne({ username: usernameData });
+  if (!user) {
+    return res.status(404).json({
+      authenticated: false,
+      message: "User not found",
+    });
+  }
+
+  console.log(user);
+  const { username, email, password } = user;
+
+  const comparePassword = bcrypt.compareSync(passwordData, password);
+  if (!comparePassword) {
+    res.status(401).json({
+      authenticated: false,
+      message: "Invalid credentials provided",
+    });
+  }
+
+  const token = jwt.sign({ username, email }, process.env.JWT_SECRET_KEY);
+
+  res.cookie("authToken", token, { maxAge: 86400 * 3, httpOnly: true });
+  res.status(200).json({
+    authenticated: true,
+    user: { ...user._doc, password: null },
+  });
 });
 
 export default router;

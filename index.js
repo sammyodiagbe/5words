@@ -2,7 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
-import authRouter from "./routes/authentication-routes";
+import authRouter from "./routes/authentication-routes.js";
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -17,7 +17,7 @@ app.use(`${baseUrl}/auth`, authRouter);
 // connect to mongodb
 
 mongoose
-  .connect("mongodb://localhost:27017", {})
+  .connect("mongodb://127.0.0.1:27017/5words")
   .then(() => {
     app.listen(port, () => {
       console.log("Listening on port ", port);

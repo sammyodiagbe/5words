@@ -49,8 +49,6 @@ router.post("/login", async (req, res) => {
       message: "User not found",
     });
   }
-
-  console.log(user);
   const { username, email, password } = user;
 
   const comparePassword = bcrypt.compareSync(passwordData, password);

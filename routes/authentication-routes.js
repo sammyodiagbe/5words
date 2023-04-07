@@ -2,8 +2,10 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import UserModel from "../db/models/userModel.js";
+import AWS from "../utils/mailer.js";
 
 const router = express.Router();
+const ses = new AWS.SES({ region: "us-east-2" });
 
 router.post("/create-account", async (req, res) => {
   // get the data from the request body
@@ -79,9 +81,44 @@ router.post("/request-password-reset", async (req, res) => {
     });
   }
 
+  const resetToken = jwt.sign(
+    { data: "Some data" },
+    process.env.JWT_SECRET_KEY,
+    {
+      expiresIn: 3600,
+    }
+  );
+
+  const params = {
+    Destination: {
+      ToAddresses: [email],
+    },
+    Message: {
+      Body: {
+        html: {
+          Data: `<h1>Click on link to reset email</h1>
+          <a href="https://localhost:3000/password-reset/${resetToken}"`,
+        },
+      },
+      Subject: {
+        Data: "Reset your password",
+      },
+    },
+    Source: "noreply@wordbatu.bleuape.com",
+  };
   // send an email to the user.
   // generate a jwt token that expires in 5 minutes
-  res.send("Sending email with code");
+
+  try {
+    const sendEmailPromise = await ses.sendEmail(params).promise();
+
+    console.log(sendEmailPromise);
+    res.send("Email has been sent");
+  } catch (error) {
+    console.log(error);
+    res.send("Something went wrong");
+  }
+  // res.send("Sending email with code");
 });
 
 // requesting a password reset

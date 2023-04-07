@@ -68,4 +68,25 @@ router.post("/login", async (req, res) => {
   });
 });
 
+router.post("/request-password-reset", async (req, res) => {
+  const { email } = req.body;
+
+  // check to see if an account with such email exist
+  const account = await UserModel.findOne({ email });
+  if (!account) {
+    res.status(404).json({
+      message: "Account with email does not exist",
+    });
+  }
+
+  // send an email to the user.
+  // generate a jwt token that expires in 5 minutes
+  res.send("Sending email with code");
+});
+
+// requesting a password reset
+router.post("/reset-password", (req, res) => {
+  const { email } = req.body;
+});
+
 export default router;

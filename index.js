@@ -7,6 +7,9 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+console.log(process.env.AWS_ACCESS_KEY);
+console.log(process.env.JWT_SECRET_KEY, "found it");
+
 const app = express();
 const port = process.env.PORT || 8080;
 const baseUrl = "/api/5words/v1";

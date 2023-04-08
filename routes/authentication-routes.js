@@ -2,7 +2,14 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import UserModel from "../db/models/userModel.js";
-import AWS from "../utils/mailer.js";
+
+import AWS from "aws-sdk";
+
+// AWS.config.update({
+//   accessKeyId: process.env.AWS_ACCESS_KEY,
+//   secretAccessKey: process.env.AWS_SECRET_KEY,
+//   region: "us-east-2",
+// });
 
 const router = express.Router();
 const ses = new AWS.SES({ region: "us-east-2" });
@@ -95,7 +102,7 @@ router.post("/request-password-reset", async (req, res) => {
     },
     Message: {
       Body: {
-        html: {
+        Html: {
           Data: `<h1>Click on link to reset email</h1>
           <a href="https://localhost:3000/password-reset/${resetToken}"`,
         },

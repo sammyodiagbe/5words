@@ -3,16 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import UserModel from "../db/models/userModel.js";
 
-import AWS from "aws-sdk";
-
-// AWS.config.update({
-//   accessKeyId: process.env.AWS_ACCESS_KEY,
-//   secretAccessKey: process.env.AWS_SECRET_KEY,
-//   region: "us-east-2",
-// });
-
 const router = express.Router();
-const ses = new AWS.SES({ region: "us-east-2" });
 
 router.post("/create-account", async (req, res) => {
   // get the data from the request body
@@ -96,35 +87,6 @@ router.post("/request-password-reset", async (req, res) => {
     }
   );
 
-  const params = {
-    Destination: {
-      ToAddresses: [email],
-    },
-    Message: {
-      Body: {
-        Html: {
-          Data: `<h1>Click on link to reset email</h1>
-          <a href="https://localhost:3000/password-reset/${resetToken}"`,
-        },
-      },
-      Subject: {
-        Data: "Reset your password",
-      },
-    },
-    Source: "noreply@wordbatu.bleuape.com",
-  };
-  // send an email to the user.
-  // generate a jwt token that expires in 5 minutes
-
-  try {
-    const sendEmailPromise = await ses.sendEmail(params).promise();
-
-    console.log(sendEmailPromise);
-    res.send("Email has been sent");
-  } catch (error) {
-    console.log(error);
-    res.send("Something went wrong");
-  }
   // res.send("Sending email with code");
 });
 

@@ -24,7 +24,12 @@ router.post("/create-account", async (req, res) => {
   // no user exist so now we can create the user
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const newUser = new UserModel({ username, password: hashedPassword, email });
+  const newUser = new UserModel({
+    username,
+    password: hashedPassword,
+    email,
+    verified: false,
+  });
   await newUser.save();
 
   const token = jwt.sign({ username, email }, process.env.JWT_SECRET_KEY);

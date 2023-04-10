@@ -23,7 +23,7 @@ mongoose
   .connect("mongodb://127.0.0.1:27017/5words")
   .then(() => {
     app.listen(port, () => {
-      console.log("Listening on port ", port);
+      console.log("Listening on port 8080 ", port);
     });
   })
   .catch((error) => console.log(error));

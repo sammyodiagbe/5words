@@ -37,7 +37,7 @@ router.post("/create-account", async (req, res) => {
 
   res.status(201).json({
     created: true,
-    message: "Account creation was successful",
+    message: "Account creation was successful.",
     user: { ...newUser._doc, password: null },
   });
 });

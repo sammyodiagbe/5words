@@ -17,7 +17,7 @@ router.post("/create-account", async (req, res) => {
     res.status(409).json({
       created: false,
       message:
-        "A user with credentials already exists, please try another username or email.",
+        "A user with credentials already exists, please try providing other credentials.",
     });
   }
 
